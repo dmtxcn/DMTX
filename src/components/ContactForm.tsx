@@ -2,10 +2,18 @@
 
 import { FormEvent, useState } from "react";
 
+import { DEFAULT_LOCALE, pageTranslations } from "../lib/i18n";
+
 type FieldName = "name" | "email" | "subject" | "message";
 
 type FormState = Record<FieldName, string>;
 type FieldErrors = Partial<Record<FieldName, string>>;
+type ContactFormCopy =
+  (typeof pageTranslations)[typeof DEFAULT_LOCALE]["contact"]["form"];
+
+type ContactFormProps = {
+  copy?: ContactFormCopy;
+};
 
 const initialForm: FormState = {
   name: "",
@@ -14,20 +22,22 @@ const initialForm: FormState = {
   message: "",
 };
 
-function validateForm(form: FormState): FieldErrors {
+function validateForm(form: FormState, copy: ContactFormCopy): FieldErrors {
   const errors: FieldErrors = {};
-  if (!form.name.trim()) errors.name = "请填写你的名字";
+  if (!form.name.trim()) errors.name = copy.requiredName;
   if (!form.email.trim()) {
-    errors.email = "请填写邮箱地址";
+    errors.email = copy.requiredEmail;
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
-    errors.email = "邮箱格式不正确";
+    errors.email = copy.invalidEmail;
   }
-  if (!form.subject.trim()) errors.subject = "请填写邮件主题";
-  if (!form.message.trim()) errors.message = "请写下想说的内容";
+  if (!form.subject.trim()) errors.subject = copy.requiredSubject;
+  if (!form.message.trim()) errors.message = copy.requiredMessage;
   return errors;
 }
 
-export function ContactForm() {
+export function ContactForm({
+  copy = pageTranslations[DEFAULT_LOCALE].contact.form,
+}: ContactFormProps) {
   const [form, setForm] = useState<FormState>(initialForm);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">(
@@ -45,11 +55,11 @@ export function ContactForm() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    const nextErrors = validateForm(form);
+    const nextErrors = validateForm(form, copy);
     if (Object.keys(nextErrors).length > 0) {
       setErrors(nextErrors);
       setStatus("error");
-      setMessage("请先补全表单内容。");
+      setMessage(copy.completeForm);
       return;
     }
 
@@ -71,17 +81,17 @@ export function ContactForm() {
       if (!response.ok || !result.ok) {
         setErrors(result.fieldErrors ?? {});
         setStatus("error");
-        setMessage(result.error ?? "邮件发送失败，请稍后再试。");
+        setMessage(result.error ?? copy.sendFailed);
         return;
       }
 
       setForm(initialForm);
       setErrors({});
       setStatus("sent");
-      setMessage("邮件已发送，我会尽快回复你。");
+      setMessage(copy.sent);
     } catch {
       setStatus("error");
-      setMessage("网络暂时不稳定，请稍后再试。");
+      setMessage(copy.networkError);
     }
   }
 
@@ -91,19 +101,19 @@ export function ContactForm() {
     <form className="contact-form" onSubmit={handleSubmit} noValidate>
       <div className="field-grid">
         <label>
-          <span>你的名字</span>
+          <span>{copy.name}</span>
           <input
             aria-invalid={Boolean(errors.name)}
             autoComplete="name"
             name="name"
             onChange={(event) => updateField("name", event.target.value)}
-            placeholder="比如：小林"
+            placeholder={copy.namePlaceholder}
             value={form.name}
           />
           {errors.name ? <small>{errors.name}</small> : null}
         </label>
         <label>
-          <span>邮箱地址</span>
+          <span>{copy.email}</span>
           <input
             aria-invalid={Boolean(errors.email)}
             autoComplete="email"
@@ -118,23 +128,23 @@ export function ContactForm() {
         </label>
       </div>
       <label>
-        <span>邮件主题</span>
+        <span>{copy.subject}</span>
         <input
           aria-invalid={Boolean(errors.subject)}
           name="subject"
           onChange={(event) => updateField("subject", event.target.value)}
-          placeholder="想聊聊一个页面、合作或普通交流"
+          placeholder={copy.subjectPlaceholder}
           value={form.subject}
         />
         {errors.subject ? <small>{errors.subject}</small> : null}
       </label>
       <label>
-        <span>内容</span>
+        <span>{copy.message}</span>
         <textarea
           aria-invalid={Boolean(errors.message)}
           name="message"
           onChange={(event) => updateField("message", event.target.value)}
-          placeholder="写下你想说的事，我会认真看。"
+          placeholder={copy.messagePlaceholder}
           rows={6}
           value={form.message}
         />
@@ -142,7 +152,7 @@ export function ContactForm() {
       </label>
       <div className="form-footer">
         <button className="primary-button" disabled={isSending} type="submit">
-          {isSending ? "发送中..." : "发送邮件"}
+          {isSending ? copy.submitSending : copy.submitIdle}
         </button>
         {message ? (
           <p className={`form-message ${status === "sent" ? "success" : ""}`}>
