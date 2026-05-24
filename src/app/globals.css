@@ -1201,12 +1201,67 @@ small,
   .hero-contact {
     display: grid;
     grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 22px;
   }
 
   .hero-contact a,
   .hero-contact button {
-    justify-content: space-between;
+    display: grid;
+    column-gap: 12px;
+    grid-template-columns: 42px minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    justify-content: initial;
+    min-height: 62px;
+    padding: 10px 12px;
+    row-gap: 2px;
     width: 100%;
+  }
+
+  .hero-contact button {
+    grid-template-columns: 42px minmax(0, 1fr) auto;
+  }
+
+  .contact-icon {
+    align-self: center;
+    border-radius: 9px;
+    flex-basis: 38px;
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    height: 38px;
+    width: 38px;
+  }
+
+  .contact-icon svg {
+    height: 21px;
+    width: 21px;
+  }
+
+  .contact-label {
+    align-self: end;
+    font-size: 12px;
+    grid-column: 2;
+    grid-row: 1;
+    line-height: 1.1;
+  }
+
+  .hero-contact strong {
+    align-self: start;
+    font-size: clamp(15px, 4.4vw, 18px);
+    grid-column: 2;
+    grid-row: 2;
+    line-height: 1.25;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    text-align: left;
+  }
+
+  .hero-contact em {
+    align-self: center;
+    font-size: 13px;
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    padding: 6px 10px;
   }
 
   .primary-button,
