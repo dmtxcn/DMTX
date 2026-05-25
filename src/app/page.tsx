@@ -313,7 +313,7 @@ export default function Home() {
               rel="noreferrer"
               target="_blank"
             >
-              工信部备案赣ICP备2022000232号-5
+              赣ICP备2022000232号-5
             </a>
           </div>
         </div>
