@@ -1,10 +1,10 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 import { DEFAULT_LOCALE, pageTranslations } from "../lib/i18n";
 
-type FieldName = "name" | "email" | "subject" | "message";
+type FieldName = "name" | "email" | "subject" | "message" | "captchaAnswer";
 
 type FormState = Record<FieldName, string>;
 type FieldErrors = Partial<Record<FieldName, string>>;
@@ -15,11 +15,19 @@ type ContactFormProps = {
   copy?: ContactFormCopy;
 };
 
+const formHints = {
+  name: "大毛",
+  subject: "请简要写明项目类型或需求重点",
+  message: "请留下背景、目标、时间节点，以及你希望我协助判断或落地的部分。",
+  sent: "已收到来信，我会在 3 小时内回复。请勿重复来信，避免信息被覆盖。",
+};
+
 const initialForm: FormState = {
   name: "",
   email: "",
   subject: "",
   message: "",
+  captchaAnswer: "",
 };
 
 function validateForm(form: FormState, copy: ContactFormCopy): FieldErrors {
@@ -32,6 +40,9 @@ function validateForm(form: FormState, copy: ContactFormCopy): FieldErrors {
   }
   if (!form.subject.trim()) errors.subject = copy.requiredSubject;
   if (!form.message.trim()) errors.message = copy.requiredMessage;
+  if (!form.captchaAnswer.trim()) {
+    errors.captchaAnswer = copy.requiredCaptcha ?? "请填写验证码";
+  }
   return errors;
 }
 
@@ -44,6 +55,30 @@ export function ContactForm({
     "idle",
   );
   const [message, setMessage] = useState("");
+  const [captcha, setCaptcha] = useState<{
+    question: string;
+    token: string;
+  } | null>(null);
+
+  async function refreshCaptcha() {
+    try {
+      const response = await fetch("/api/captcha", { cache: "no-store" });
+      const result = (await response.json()) as {
+        ok: boolean;
+        question?: string;
+        token?: string;
+      };
+      if (response.ok && result.ok && result.question && result.token) {
+        setCaptcha({ question: result.question, token: result.token });
+      }
+    } catch {
+      setCaptcha(null);
+    }
+  }
+
+  useEffect(() => {
+    void refreshCaptcha();
+  }, []);
 
   function updateField(field: FieldName, value: string) {
     setForm((current) => ({ ...current, [field]: value }));
@@ -70,7 +105,10 @@ export function ContactForm({
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          captchaToken: captcha?.token ?? "",
+        }),
       });
       const result = (await response.json()) as {
         ok: boolean;
@@ -82,13 +120,18 @@ export function ContactForm({
         setErrors(result.fieldErrors ?? {});
         setStatus("error");
         setMessage(result.error ?? copy.sendFailed);
+        if (result.fieldErrors?.captchaAnswer) {
+          void refreshCaptcha();
+          setForm((current) => ({ ...current, captchaAnswer: "" }));
+        }
         return;
       }
 
       setForm(initialForm);
       setErrors({});
       setStatus("sent");
-      setMessage(copy.sent);
+      setMessage(formHints.sent);
+      void refreshCaptcha();
     } catch {
       setStatus("error");
       setMessage(copy.networkError);
@@ -107,7 +150,7 @@ export function ContactForm({
             autoComplete="name"
             name="name"
             onChange={(event) => updateField("name", event.target.value)}
-            placeholder={copy.namePlaceholder}
+            placeholder={formHints.name}
             value={form.name}
           />
           {errors.name ? <small>{errors.name}</small> : null}
@@ -133,7 +176,7 @@ export function ContactForm({
           aria-invalid={Boolean(errors.subject)}
           name="subject"
           onChange={(event) => updateField("subject", event.target.value)}
-          placeholder={copy.subjectPlaceholder}
+          placeholder={formHints.subject}
           value={form.subject}
         />
         {errors.subject ? <small>{errors.subject}</small> : null}
@@ -144,12 +187,39 @@ export function ContactForm({
           aria-invalid={Boolean(errors.message)}
           name="message"
           onChange={(event) => updateField("message", event.target.value)}
-          placeholder={copy.messagePlaceholder}
+          placeholder={formHints.message}
           rows={6}
           value={form.message}
         />
         {errors.message ? <small>{errors.message}</small> : null}
       </label>
+      <div className="captcha-row">
+        <label>
+          <span>{copy.captcha ?? "验证码"}</span>
+          <input
+            aria-invalid={Boolean(errors.captchaAnswer)}
+            inputMode="numeric"
+            name="captchaAnswer"
+            onChange={(event) =>
+              updateField("captchaAnswer", event.target.value)
+            }
+            placeholder={copy.captchaPlaceholder ?? "请输入计算结果"}
+            value={form.captchaAnswer}
+          />
+          {errors.captchaAnswer ? <small>{errors.captchaAnswer}</small> : null}
+        </label>
+        <button
+          className="captcha-card"
+          onClick={() => {
+            setForm((current) => ({ ...current, captchaAnswer: "" }));
+            void refreshCaptcha();
+          }}
+          type="button"
+        >
+          <span>{copy.captchaQuestion ?? "请计算"}</span>
+          <strong>{captcha?.question ?? "加载中"}</strong>
+        </button>
+      </div>
       <div className="form-footer">
         <button className="primary-button" disabled={isSending} type="submit">
           {isSending ? copy.submitSending : copy.submitIdle}

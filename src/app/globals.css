@@ -357,39 +357,41 @@ h3 {
 }
 
 .hero-contact {
-  display: flex;
-  flex-wrap: wrap;
+  background: rgba(247, 251, 255, 0.54);
+  border: 1px solid rgba(158, 183, 202, 0.72);
+  border-radius: 8px;
+  box-shadow: 0 16px 42px rgba(16, 36, 58, 0.08);
+  display: grid;
   gap: 10px;
   margin-top: 24px;
+  padding: 10px;
 }
 
-.hero-contact a,
-.hero-contact button {
+.contact-card {
   align-items: center;
-  background: rgba(247, 251, 255, 0.74);
+  background: rgba(255, 255, 255, 0.7);
   border: 1px solid rgba(158, 183, 202, 0.78);
   border-radius: 8px;
-  box-shadow: 0 12px 28px rgba(16, 36, 58, 0.08);
   color: inherit;
   cursor: pointer;
-  display: inline-flex;
-  gap: 9px;
-  min-height: 42px;
-  padding: 8px 13px 8px 10px;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 42px minmax(0, 1fr) minmax(92px, auto);
+  min-height: 70px;
+  padding: 12px;
+  text-align: left;
+  width: 100%;
 }
 
-.hero-contact a,
-.hero-contact button {
+.contact-card {
   transition:
     background 180ms ease,
     border-color 180ms ease,
     transform 180ms ease;
 }
 
-.hero-contact a:hover,
-.hero-contact a:focus-visible,
-.hero-contact button:hover,
-.hero-contact button:focus-visible {
+.contact-card:hover,
+.contact-card:focus-visible {
   background: #ffffff;
   border-color: var(--accent);
   outline: none;
@@ -403,15 +405,15 @@ h3 {
   border-radius: 8px;
   display: inline-flex;
   flex: 0 0 28px;
-  height: 28px;
+  height: 42px;
   justify-content: center;
-  width: 28px;
+  width: 42px;
 }
 
 .contact-icon svg {
   display: block;
-  height: 17px;
-  width: 17px;
+  height: 22px;
+  width: 22px;
 }
 
 .contact-icon-mail svg {
@@ -448,15 +450,27 @@ h3 {
   font-weight: 900;
 }
 
-.hero-contact strong {
-  color: var(--ink);
-  font-family: var(--mono);
-  font-size: 14px;
-  font-weight: 900;
-  letter-spacing: 0;
+.contact-content {
+  align-items: flex-start;
+  display: grid;
+  gap: 4px;
+  justify-items: start;
+  min-width: 0;
+  text-align: left;
 }
 
-.hero-contact em {
+.contact-content strong {
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: clamp(16px, 2.1vw, 20px);
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.contact-action {
+  align-self: center;
   background: rgba(13, 111, 143, 0.1);
   border-radius: 999px;
   color: var(--accent);
@@ -464,6 +478,7 @@ h3 {
   font-style: normal;
   font-weight: 900;
   padding: 4px 7px;
+  text-align: center;
   white-space: nowrap;
 }
 
@@ -964,6 +979,51 @@ textarea {
   min-height: 168px;
 }
 
+.captcha-row {
+  align-items: end;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, 0.42fr);
+}
+
+.captcha-card {
+  align-items: flex-start;
+  background: #eef8fc;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  color: var(--ink);
+  cursor: pointer;
+  display: grid;
+  gap: 6px;
+  min-height: 76px;
+  padding: 12px 14px;
+  text-align: left;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.captcha-card:hover,
+.captcha-card:focus-visible {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(13, 111, 143, 0.12);
+  transform: translateY(-1px);
+}
+
+.captcha-card span {
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.captcha-card strong {
+  font-family: var(--font-mono);
+  font-size: 24px;
+  line-height: 1;
+}
+
 input:focus,
 textarea:focus {
   background: #ffffff;
@@ -1114,6 +1174,10 @@ small,
     max-width: none;
     position: static;
   }
+
+  .hero-contact {
+    margin-top: 22px;
+  }
 }
 
 @media (max-width: 620px) {
@@ -1169,6 +1233,15 @@ small,
     padding: 0 11px;
   }
 
+  .contact-card {
+    grid-template-columns: 42px minmax(0, 1fr);
+  }
+
+  .contact-action {
+    grid-column: 2;
+    justify-self: start;
+  }
+
   .language-button {
     min-height: 38px;
     padding: 0 9px;
@@ -1198,72 +1271,6 @@ small,
     flex-direction: column;
   }
 
-  .hero-contact {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 12px;
-    margin-top: 22px;
-  }
-
-  .hero-contact a,
-  .hero-contact button {
-    display: grid;
-    column-gap: 12px;
-    grid-template-columns: 42px minmax(0, 1fr);
-    grid-template-rows: auto auto;
-    justify-content: initial;
-    min-height: 62px;
-    padding: 10px 12px;
-    row-gap: 2px;
-    width: 100%;
-  }
-
-  .hero-contact button {
-    grid-template-columns: 42px minmax(0, 1fr) auto;
-  }
-
-  .contact-icon {
-    align-self: center;
-    border-radius: 9px;
-    flex-basis: 38px;
-    grid-column: 1;
-    grid-row: 1 / span 2;
-    height: 38px;
-    width: 38px;
-  }
-
-  .contact-icon svg {
-    height: 21px;
-    width: 21px;
-  }
-
-  .contact-label {
-    align-self: end;
-    font-size: 12px;
-    grid-column: 2;
-    grid-row: 1;
-    line-height: 1.1;
-  }
-
-  .hero-contact strong {
-    align-self: start;
-    font-size: clamp(15px, 4.4vw, 18px);
-    grid-column: 2;
-    grid-row: 2;
-    line-height: 1.25;
-    min-width: 0;
-    overflow-wrap: anywhere;
-    text-align: left;
-  }
-
-  .hero-contact em {
-    align-self: center;
-    font-size: 13px;
-    grid-column: 3;
-    grid-row: 1 / span 2;
-    padding: 6px 10px;
-  }
-
   .primary-button,
   .secondary-button {
     width: 100%;
@@ -1279,6 +1286,10 @@ small,
 
   .signal-grid,
   .field-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .captcha-row {
     grid-template-columns: 1fr;
   }
 

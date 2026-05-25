@@ -66,6 +66,9 @@ export type PageCopy = {
       namePlaceholder: string;
       subjectPlaceholder: string;
       messagePlaceholder: string;
+      captcha?: string;
+      captchaQuestion?: string;
+      captchaPlaceholder?: string;
       submitIdle: string;
       submitSending: string;
       requiredName: string;
@@ -73,6 +76,7 @@ export type PageCopy = {
       invalidEmail: string;
       requiredSubject: string;
       requiredMessage: string;
+      requiredCaptcha?: string;
       completeForm: string;
       sendFailed: string;
       sent: string;
@@ -92,7 +96,7 @@ ship_when_ready({
   fallback: "clear"
 })`;
 
-const stack = ["Next.js", "TypeScript", "React", "API Routes", "Resend", "CSS"];
+const stack = ["Next.js", "TypeScript", "React", "API Routes", "SMTP", "CSS"];
 
 export const pageTranslations: Record<LocaleCode, PageCopy> = {
   "zh-CN": {
@@ -163,7 +167,7 @@ export const pageTranslations: Record<LocaleCode, PageCopy> = {
       eyebrow: "Contact",
       title: "把想法发给大毛同学",
       body:
-        "表单会通过 Resend 发送到配置的收件邮箱。你可以聊项目、页面、合作，也可以只发一个开头，我会认真看。",
+        "表单会通过 SMTP 发送到配置的收件邮箱。你可以聊项目、页面、合作，也可以只发一个开头，我会认真看。",
       noteLabel: "Response",
       noteValue: "收到后尽快回复",
       form: {
@@ -255,7 +259,7 @@ export const pageTranslations: Record<LocaleCode, PageCopy> = {
       eyebrow: "聯絡",
       title: "把想法發給大毛同學",
       body:
-        "表單會透過 Resend 發送到配置的收件信箱。你可以聊專案、頁面、合作，也可以只發一個開頭，我會認真看。",
+        "表單會透過 SMTP 發送到配置的收件信箱。你可以聊專案、頁面、合作，也可以只發一個開頭，我會認真看。",
       noteLabel: "回覆",
       noteValue: "收到後盡快回覆",
       form: {
@@ -331,7 +335,7 @@ export const pageTranslations: Record<LocaleCode, PageCopy> = {
     contact: {
       eyebrow: "Contact",
       title: "Send your idea to Da Mao",
-      body: "The form sends mail through Resend to the configured inbox. Projects, pages, collaborations, or a simple hello are all welcome.",
+      body: "The form sends mail through SMTP to the configured inbox. Projects, pages, collaborations, or a simple hello are all welcome.",
       noteLabel: "Response",
       noteValue: "I will reply soon",
       form: {
@@ -407,7 +411,7 @@ export const pageTranslations: Record<LocaleCode, PageCopy> = {
     contact: {
       eyebrow: "連絡",
       title: "アイデアを大毛同学へ送る",
-      body: "フォームは Resend を通じて設定済みの受信箱へ送信されます。プロジェクト、ページ、協業、短い挨拶でも歓迎です。",
+      body: "フォームは SMTP を通じて設定済みの受信箱へ送信されます。プロジェクト、ページ、協業、短い挨拶でも歓迎です。",
       noteLabel: "返信",
       noteValue: "できるだけ早く返信します",
       form: {
@@ -483,7 +487,7 @@ export const pageTranslations: Record<LocaleCode, PageCopy> = {
     contact: {
       eyebrow: "연락",
       title: "아이디어를 대모 동학에게 보내 주세요",
-      body: "폼은 Resend를 통해 설정된 받은 편지함으로 전송됩니다. 프로젝트, 페이지, 협업, 짧은 인사도 모두 좋습니다.",
+      body: "폼은 SMTP를 통해 설정된 받은 편지함으로 전송됩니다. 프로젝트, 페이지, 협업, 짧은 인사도 모두 좋습니다.",
       noteLabel: "응답",
       noteValue: "받는 대로 빠르게 답장하겠습니다",
       form: {
@@ -559,7 +563,7 @@ export const pageTranslations: Record<LocaleCode, PageCopy> = {
     contact: {
       eyebrow: "Contact",
       title: "Envoyez votre idée à Da Mao",
-      body: "Le formulaire envoie le message via Resend vers la boîte configurée. Projets, pages, collaborations ou simple bonjour sont bienvenus.",
+      body: "Le formulaire envoie le message via SMTP vers la boîte configurée. Projets, pages, collaborations ou simple bonjour sont bienvenus.",
       noteLabel: "Réponse",
       noteValue: "Je répondrai bientôt",
       form: {
@@ -635,7 +639,7 @@ export const pageTranslations: Record<LocaleCode, PageCopy> = {
     contact: {
       eyebrow: "Contacto",
       title: "Envía tu idea a Da Mao",
-      body: "El formulario envía el mensaje con Resend al buzón configurado. Proyectos, páginas, colaboraciones o un simple saludo son bienvenidos.",
+      body: "El formulario envía el mensaje con SMTP al buzón configurado. Proyectos, páginas, colaboraciones o un simple saludo son bienvenidos.",
       noteLabel: "Respuesta",
       noteValue: "Responderé pronto",
       form: {
@@ -711,7 +715,7 @@ export const pageTranslations: Record<LocaleCode, PageCopy> = {
     contact: {
       eyebrow: "Kontakt",
       title: "Sende deine Idee an Da Mao",
-      body: "Das Formular sendet die Nachricht über Resend an das konfigurierte Postfach. Projekte, Seiten, Kooperationen oder ein kurzes Hallo sind willkommen.",
+      body: "Das Formular sendet die Nachricht über SMTP an das konfigurierte Postfach. Projekte, Seiten, Kooperationen oder ein kurzes Hallo sind willkommen.",
       noteLabel: "Antwort",
       noteValue: "Ich antworte bald",
       form: {
@@ -787,7 +791,7 @@ export const pageTranslations: Record<LocaleCode, PageCopy> = {
     contact: {
       eyebrow: "Контакты",
       title: "Отправьте идею Да Мао",
-      body: "Форма отправляет сообщение через Resend в настроенный почтовый ящик. Подойдут проекты, страницы, сотрудничество или простое приветствие.",
+      body: "Форма отправляет сообщение через SMTP в настроенный почтовый ящик. Подойдут проекты, страницы, сотрудничество или простое приветствие.",
       noteLabel: "Ответ",
       noteValue: "Я скоро отвечу",
       form: {
@@ -863,7 +867,7 @@ export const pageTranslations: Record<LocaleCode, PageCopy> = {
     contact: {
       eyebrow: "Liên hệ",
       title: "Gửi ý tưởng cho Đại Mao",
-      body: "Form sẽ gửi qua Resend đến hộp thư đã cấu hình. Bạn có thể nói về dự án, trang web, hợp tác hoặc chỉ gửi một lời chào.",
+      body: "Form sẽ gửi qua SMTP đến hộp thư đã cấu hình. Bạn có thể nói về dự án, trang web, hợp tác hoặc chỉ gửi một lời chào.",
       noteLabel: "Phản hồi",
       noteValue: "Tôi sẽ phản hồi sớm",
       form: {

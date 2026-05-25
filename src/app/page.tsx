@@ -100,7 +100,7 @@ export default function Home() {
             <h1 id="hero-title">{copy.hero.title}</h1>
             <p className="hero-lede">{copy.hero.lede}</p>
             <div className="hero-contact" aria-label="Direct contact">
-              <a href="mailto:service@dmtx.cn">
+              <a className="contact-card" href="mailto:service@dmtx.cn">
                 <span className="contact-icon contact-icon-mail" aria-hidden="true">
                   <svg viewBox="0 0 24 24">
                     <path d="M23.94 3.44 12.01 13.47.09 3.44z" />
@@ -109,11 +109,15 @@ export default function Home() {
                     <path d="M24 20.55 16.03 11.04 24 4.3z" />
                   </svg>
                 </span>
-                <span className="contact-label">邮箱</span>
-                <strong>service@dmtx.cn</strong>
+                <span className="contact-content">
+                  <span className="contact-label">邮箱</span>
+                  <strong>service@dmtx.cn</strong>
+                </span>
+                <span className="contact-action">写邮件</span>
               </a>
               <button
                 aria-label="复制微信 dmtx_cn"
+                className="contact-card"
                 data-copy-contact="wechat"
                 data-copy-value="dmtx_cn"
                 type="button"
@@ -124,14 +128,17 @@ export default function Home() {
                     <path d="M953.8 613c0-125.9-124.2-227.2-264.8-227.2-148.8 0-266.5 103-266.5 227.2 0 125.9 117.7 227.2 266.5 227.2 31.1 0 62.1-8.2 93.2-16.3l85 47.4-22.9-78.5c62.1-47.4 109.5-109.5 109.5-179.8z m-351.5-39.2c-14.7 0-31.1-14.7-31.1-31.1 0-14.7 16.3-31.1 31.1-31.1 22.9 0 39.2 16.3 39.2 31.1 0 16.4-14.7 31.1-39.2 31.1z m178-7.6c-14.8 0-31.3-14.6-31.3-30.7 0-14.6 16.5-30.7 31.3-30.7 23.1 0 39.5 16.2 39.5 30.7 0 16.2-16.4 30.7-39.5 30.7z" />
                   </svg>
                 </span>
-                <span className="contact-label">微信</span>
-                <strong>dmtx_cn</strong>
-                <em data-copy-status>
+                <span className="contact-content">
+                  <span className="contact-label">微信</span>
+                  <strong>dmtx_cn</strong>
+                </span>
+                <em className="contact-action" data-copy-status>
                   {copiedContact === "wechat" ? "已复制" : "点击复制"}
                 </em>
               </button>
               <button
                 aria-label="复制 QQ 2041226489"
+                className="contact-card"
                 data-copy-contact="qq"
                 data-copy-value="2041226489"
                 type="button"
@@ -150,9 +157,11 @@ export default function Home() {
                     <path className="qq-red" d="M18.47 10.14s-2.86.95-6.65.97h-.02c-3.78-.03-6.64-.97-6.64-.97l-.96 2.51c2.39.76 5.36 1.24 7.61 1.22h.02c2.24.03 5.21-.46 7.61-1.22l-.96-2.51z" />
                   </svg>
                 </span>
-                <span className="contact-label">QQ</span>
-                <strong>2041226489</strong>
-                <em data-copy-status>
+                <span className="contact-content">
+                  <span className="contact-label">QQ</span>
+                  <strong>2041226489</strong>
+                </span>
+                <em className="contact-action" data-copy-status>
                   {copiedContact === "qq" ? "已复制" : "点击复制"}
                 </em>
               </button>
